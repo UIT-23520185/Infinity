@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trang chủ</title>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .carousel-item img {
+      width: 100%;
+      height: auto;
+      max-height: 400px;
+      object-fit: contain;
+    }
+    footer {
+      background-color: #2f3640;
+      color: white;
+      padding: 40px 20px;
+    }
+    .social-icons i {
+      font-size: 1.5rem;
+      margin-right: 10px;
+    }
+	.carousel {
+    position: relative;
+  }
+
+  .carousel-control-prev,
+  .carousel-control-next {
+    z-index: 10;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+  }
+
+  .custom-icon {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    padding: 10px;
+  }
+
+  .carousel-inner img {
+    max-height: 400px;
+    object-fit: cover;
+  }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="#">TalentHub</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Tìm việc</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Việc mới nhất</a></li>
+            <li><a class="dropdown-item" href="#">Theo ngành nghề</a></li>
+          </ul>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="#">Giới thiệu</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Liên hệ</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Cẩm nang nghề nghiệp</a></li>
+      </ul>
+      <div class="d-flex">
+        <a class="btn btn-outline-light me-2" href="dang-ky.html">Đăng kí</a>
+        <a class="btn btn-primary me-2" href="dang-nhap.html">Đăng nhập</a>
+        <a class="btn btn-light fw-bold" href="nha-tuyen-dung/trang-chu.html">Dành cho nhà tuyển dụng</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div style="background-color: #e5f3c7;" class="p-3 mb-2">
+<!-- Banner text -->
+<div class="text-center py-2 text-dark">
+  <strong>Tìm việc làm nhanh 24h, việc làm mới nhất trên toàn quốc</strong><br>
+  Tiếp cận 40,000+ tin tuyển dụng việc làm mới mỗi ngày từ hàng nghìn doanh nghiệp uy tín tại Việt Nam
+</div>
+
+<!-- Banner carousel -->
+<div class="container mb-4 position-relative">
+  <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner rounded">
+      <div class="carousel-item active text-center">
+        <img src="img/anh1.png" class="d-block w-100" alt="Ảnh 1">
+      </div>
+      <div class="carousel-item text-center">
+        <img src="img/anh2.png" class="d-block w-100" alt="Ảnh 2">
+      </div>
+    </div>
+
+    <!-- Nút điều hướng với định dạng nổi lên ảnh -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon custom-icon" aria-hidden="true"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon custom-icon" aria-hidden="true"></span>
+    </button>
+  </div>
+</div>
+</div>
+
+<!-- Action buttons -->
+<div class="text-center mb-5">
+  <a class="btn btn-primary px-4 py-2 me-3" href="#">Tìm việc ngay</a>
+  <a class="btn btn-primary px-4 py-2" href="#">Đăng tin tuyển dụng ngay</a>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-6">
+        <h5>Công ty tư vấn hỗ trợ việc làm TalentHub</h5>
+        <p class="mb-1">Giấy cấp phép đăng kí kinh doanh số: 1234567890</p>
+        <p class="mb-1">Giấy phép hoạt động dịch vụ việc làm số: 0123456789</p>
+        <p>Địa chỉ: Phường Linh Trung, Thành phố Thủ Đức, Thành phố Hồ Chí Minh, Việt Nam</p>
+      </div>
+      <div class="col-md-3">
+        <h5>Thông tin</h5>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-white text-decoration-none">Giới thiệu</a></li>
+          <li><a href="#" class="text-white text-decoration-none">Liên hệ</a></li>
+          <li><a href="#" class="text-white text-decoration-none">Quy định bảo mật</a></li>
+          <li><a href="#" class="text-white text-decoration-none">Sơ đồ Website</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h5>Kết nối với chúng tôi</h5>
+        <div class="social-icons">
+          <a href="#"><img src="img/facebook-icon.png" width="30" alt="Facebook"></a>
+          <a href="#"><img src="img/insta-icon.png" width="30" alt="Instagram"></a>
+          <a href="#"><img src="img/tiktok-icon.png" width="30" alt="TikTok"></a>
+          <a href="#"><img src="img/yt-icon.png" width="30" alt="YouTube"></a>
+          <a href="#"><img src="img/zalo-icon.png" width="30" alt="Zalo"></a>
+        </div>
+      </div>
+    </div>
+    <div class="text-center mt-4">
+      © 5/2025 - Team Infinity Tech
+    </div>
+  </div>
+</footer>
+
+<script src="js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
