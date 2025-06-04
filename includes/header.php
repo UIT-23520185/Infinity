@@ -44,7 +44,7 @@ session_start();
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-              <img src="img/user.png" alt="avatar" class="rounded-circle" width="30" height="30">
+              <img src="img/avatar.jpg" alt="avatar" class="rounded-circle" width="30" height="30">
               <span class="ms-2"><?php echo htmlspecialchars($_SESSION['hoten']); ?></span>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">

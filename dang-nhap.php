@@ -17,6 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['username'] = $user['USERNAME'];
         $_SESSION['hoten'] = $user['HOTEN'];
         $_SESSION['vaitro'] = $user['TENVT'];
+        $_SESSION['matk'] = $user['MATK'];
         header("Location: trang-chu.php");
         exit();
     } else {

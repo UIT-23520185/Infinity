@@ -2,65 +2,48 @@
 include 'includes/header.php';
 include 'includes/dbconnection.php';
 
+$matk = $_SESSION['matk'];
+$message = '';
 
-$username = $_SESSION['username'] ?? '';
-$row = null;
+// Lấy thông tin ứng viên
+$stmt = $conn->prepare("SELECT * FROM UNGVIEN WHERE MATK = ?");
+$stmt->execute([$matk]);
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if ($username) {
-    // Lấy dữ liệu ứng viên theo TENUV
-    $sql = "SELECT * FROM UNGVIEN WHERE TENUV = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute([$username]);
+// Nếu form được submit
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $tenuv = $_POST['tenuv'];
+    $gioitinh = $_POST['gioitinh'] ?? null;
+    $chuyenmon = $_POST['chuyenmon'] ?? null;
+    $cvht = $_POST['cvht'] ?? null;
+    $sonamkn = $_POST['sonamkn'] ?? null;
+    $ngaysinh = $_POST['ngaysinh'];
+
+    if ($row) {
+        // Cập nhật
+        $stmt = $conn->prepare("UPDATE UNGVIEN SET TENUV=?, GIOITINH=?, CHUYENMON=?, CVHT=?, SONAMKN=?, NGAYSINH=? WHERE MATK=?");
+        $stmt->execute([$tenuv, $gioitinh, $chuyenmon, $cvht, $sonamkn, $ngaysinh, $matk]);
+    } else {
+        // Chèn mới
+        $ngaydk = date('Y-m-d');
+        $stmt = $conn->prepare("INSERT INTO UNGVIEN (TENUV, GIOITINH, CHUYENMON, CVHT, SONAMKN, NGAYSINH, NGDKTK, MATK)
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$tenuv, $gioitinh, $chuyenmon, $cvht, $sonamkn, $ngaysinh, $ngaydk, $matk]);
+    }
+
+    // Cập nhật họ tên vào bảng TAIKHOAN
+    $stmt = $conn->prepare("UPDATE TAIKHOAN SET HOTEN = ? WHERE MATK = ?");
+    $stmt->execute([$tenuv, $matk]);
+
+    // Thông báo thành công
+    $message = "Cập nhật thông tin thành công!";
+
+    // Cập nhật lại thông tin ứng viên để hiển thị
+    $stmt = $conn->prepare("SELECT * FROM UNGVIEN WHERE MATK = ?");
+    $stmt->execute([$matk]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
 }
-
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Lấy dữ liệu từ form
-    $tenuv = $_POST['tenuv'] ?? '';
-    $gioitinh = $_POST['gioitinh'] ?? '';
-    $chuyenmon = $_POST['chuyenmon'] ?? '';
-    $cvht = $_POST['cvht'] ?? '';
-    $sonamkn = $_POST['sonamkn'] ?? null;
-    $ngaysinh = $_POST['ngaysinh'] ?? '';
-
-    // Validate đơn giản
-    $errors = [];
-    if (!$tenuv) $errors[] = "Tên ứng viên không được để trống.";
-    if (!in_array($gioitinh, ['Nam', 'Nữ', 'Khác'])) $errors[] = "Giới tính không hợp lệ.";
-    if (!$ngaysinh) $errors[] = "Ngày sinh không được để trống.";
-    if ($sonamkn !== null && (!is_numeric($sonamkn) || $sonamkn < 0)) $errors[] = "Số năm kinh nghiệm phải là số không âm.";
-
-    if (empty($errors)) {
-        if ($row) {
-            // Cập nhật
-            $update_sql = "UPDATE UNGVIEN SET TENUV = ?, GIOITINH = ?, CHUYENMON = ?, CVHT = ?, SONAMKN = ?, NGAYSINH = ? WHERE TENUV = ?";
-            $stmt = $conn->prepare($update_sql);
-            $ok = $stmt->execute([$tenuv, $gioitinh, $chuyenmon, $cvht, $sonamkn, $ngaysinh, $username]);
-            if ($ok) {
-                echo "<script>alert('Cập nhật thành công!'); window.location.reload();</script>";
-                $_SESSION['username'] = $tenuv;
-            } else {
-                echo "<script>alert('Cập nhật thất bại!');</script>";
-            }
-        } else {
-            // Thêm mới
-            $insert_sql = "INSERT INTO UNGVIEN (TENUV, GIOITINH, CHUYENMON, CVHT, SONAMKN, NGAYSINH, NGDKTK) VALUES (?, ?, ?, ?, ?, ?, NOW())";
-            $stmt = $conn->prepare($insert_sql);
-            $ok = $stmt->execute([$tenuv, $gioitinh, $chuyenmon, $cvht, $sonamkn, $ngaysinh]);
-            if ($ok) {
-                echo "<script>alert('Thêm thông tin thành công!'); window.location.reload();</script>";
-                $_SESSION['username'] = $tenuv;
-            } else {
-                echo "<script>alert('Thêm thông tin thất bại!');</script>";
-            }
-        }
-    } else {
-        $error_msg = implode("\\n", $errors);
-        echo "<script>alert('$error_msg');</script>";
-    }
-}
 ?>
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -120,11 +103,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         .gender-options input {
             width: auto;
         }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <h2>Thông tin ứng viên</h2>
+    
+    <?php if (!empty($message)) : ?>
+        <div class="alert-success text-center"><?php echo $message; ?></div>
+    <?php endif; ?>
+
     <form method="POST" action="">
         <label for="tenuv">Tên ứng viên:</label>
         <input type="text" id="tenuv" name="tenuv" value="<?php echo htmlspecialchars($row['TENUV'] ?? ''); ?>" required />
@@ -144,7 +140,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <label for="chuyenmon">Chuyên môn:</label>
         <input type="text" id="chuyenmon" name="chuyenmon" value="<?php echo htmlspecialchars($row['CHUYENMON'] ?? ''); ?>" />
 
-        <label for="cvht">Cố vấn học tập (CVHT):</label>
+        <label for="cvht">Công việc hiện tại:</label>
         <input type="text" id="cvht" name="cvht" value="<?php echo htmlspecialchars($row['CVHT'] ?? ''); ?>" />
 
         <label for="sonamkn">Số năm kinh nghiệm:</label>
