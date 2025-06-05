@@ -117,7 +117,29 @@ if ($tab === 'cai-dat-bao-mat' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = "✅ Đổi mật khẩu thành công!";
     }
 }
+// tin da luu
+if ($tab === 'tin-da-luu') {
+    // Lấy MAUV từ MATK
+    $stmt = $conn->prepare("SELECT MAUV FROM UNGVIEN WHERE MATK = ?");
+    $stmt->execute([$matk]);
+    $uv = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    if ($uv) {
+        $mauv = $uv['MAUV'];
+
+        // Truy vấn các tin đã lưu
+        $stmt = $conn->prepare("
+            SELECT BD.MABD, BD.TENCV, BD.TENNGANH, BD.LUONG, BD.DIACHI, BD.HINHANH, BD.KINHNGHIEM, LUUTIN.NGAYLUU
+            FROM LUUTIN 
+            JOIN BAIDANG BD ON LUUTIN.MABD = BD.MABD
+            WHERE LUUTIN.MAUV = ?
+            ORDER BY LUUTIN.NGAYLUU DESC
+        ");
+        $stmt->execute([$mauv]);
+        $tinLuu = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } else {
+        $tinLuu = [];
+    }}
 function isActive($currentTab, $tabName) {
     return $currentTab === $tabName ? 'active' : '';
 }
@@ -240,7 +262,6 @@ function isActive($currentTab, $tabName) {
     <?php endif; ?>
 
     <form method="POST" action="ho-so.php?tab=thong-tin-ca-nhan">
-        <!-- Các trường nhập -->
         <label for="tenuv">Tên ứng viên:</label>
         <input type="text" id="tenuv" name="tenuv" value="<?php echo htmlspecialchars($row['TENUV'] ?? ''); ?>" required />
 
@@ -284,15 +305,14 @@ function isActive($currentTab, $tabName) {
 
     <?php if (!empty($row['CV_IMAGE'])): ?>
       <p>File CV hiện tại:</p>
-      
+
       <?php
         $cvFile = $row['CV_IMAGE'];
         $cvExtension = strtolower(pathinfo($cvFile, PATHINFO_EXTENSION));
       ?>
 
       <?php if (in_array($cvExtension, ['jpg', 'jpeg', 'png', 'gif'])): ?>
-        <img src="uploads/<?php echo htmlspecialchars($cvFile); ?>" 
-             alt="Ảnh CV" 
+        <img src="uploads/<?php echo htmlspecialchars($cvFile); ?>" alt="Ảnh CV"
              style="max-width: 300px; height: auto; border: 1px solid #ccc; padding: 5px;">
       <?php elseif ($cvExtension === 'pdf'): ?>
         <a href="uploads/<?php echo htmlspecialchars($cvFile); ?>" target="_blank">
@@ -313,21 +333,50 @@ function isActive($currentTab, $tabName) {
 
   <?php
     } elseif ($tab === 'tin-da-luu') {
-      echo "<h3>Danh sách tin đã lưu - đang phát triển</h3>";
+  ?>
+    <h3>📝 Tin tuyển dụng đã lưu</h3>
+    <?php if (empty($tinLuu)) : ?>
+        <p>Bạn chưa lưu tin tuyển dụng nào.</p>
+    <?php else : ?>
+        <div class="row">
+            <?php foreach ($tinLuu as $tin) : ?>
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <?php if (!empty($tin['HINHANH'])): ?>
+                            <img src="<?php echo htmlspecialchars($tin['HINHANH']); ?>" class="card-img-top" alt="Ảnh công việc">
+                        <?php endif; ?>
+                        <div class="card-body">
+                            <h5 class="card-title"><?php echo htmlspecialchars($tin['TENCV']); ?></h5>
+                            <p class="card-text">
+                                <strong>Ngành:</strong> <?php echo htmlspecialchars($tin['TENNGANH']); ?><br>
+                                <strong>Lương:</strong> <?php echo htmlspecialchars($tin['LUONG']); ?><br>
+                                <strong>Địa chỉ:</strong> <?php echo htmlspecialchars($tin['DIACHI']); ?><br>
+                                <strong>Kinh nghiệm:</strong> <?php echo htmlspecialchars($tin['KINHNGHIEM']); ?><br>
+                                <strong>Ngày lưu:</strong> <?php echo date("d/m/Y H:i", strtotime($tin['NGAYLUU'])); ?>
+                            </p>
+                            <a href="chi-tiet-tin.php?id=<?php echo $tin['MABD']; ?>" class="btn btn-primary">Xem chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+  <?php
     } elseif ($tab === 'tin-da-ung-tuyen') {
       echo "<h3>Danh sách tin đã ứng tuyển - đang phát triển</h3>";
     } elseif ($tab === 'cai-dat-bao-mat') {
   ?>
       <h3>Đổi mật khẩu</h3>
-<?php if (!empty($message)) : ?>
-    <div class="alert-success" style="color: green; border: 1px solid green; padding: 8px;">
-        <?php echo $message; ?>
-    </div>
-<?php elseif (!empty($error)) : ?>
-    <div class="alert-danger" style="color: red; border: 1px solid red; padding: 8px;">
-        <?php echo $error; ?>
-    </div>
-<?php endif; ?>
+      <?php if (!empty($message)) : ?>
+          <div class="alert-success" style="color: green; border: 1px solid green; padding: 8px;">
+              <?php echo $message; ?>
+          </div>
+      <?php elseif (!empty($error)) : ?>
+          <div class="alert-danger" style="color: red; border: 1px solid red; padding: 8px;">
+              <?php echo $error; ?>
+          </div>
+      <?php endif; ?>
 
       <form method="POST" action="ho-so.php?tab=cai-dat-bao-mat">
           <label for="matkhaucu">Mật khẩu hiện tại:</label>
@@ -347,6 +396,6 @@ function isActive($currentTab, $tabName) {
     }
   ?>
 </div>
-  
+
 </body>
 </html>
