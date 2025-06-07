@@ -143,6 +143,31 @@ if ($tab === 'tin-da-luu') {
 function isActive($currentTab, $tabName) {
     return $currentTab === $tabName ? 'active' : '';
 }
+// tin ung tuyen
+if ($tab === 'tin-da-ung-tuyen') {
+    // Lấy MAUV từ MATK
+    $stmt = $conn->prepare("SELECT MAUV FROM UNGVIEN WHERE MATK = ?");
+    $stmt->execute([$matk]);
+    $uv = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($uv) {
+        $mauv = $uv['MAUV'];
+
+        // Truy vấn các tin đã ứng tuyển
+        $stmt = $conn->prepare("
+            SELECT BD.MABD, BD.TENCV, BD.TENNGANH, BD.LUONG, BD.DIACHI, BD.HINHANH, BD.KINHNGHIEM, CT.NGAYUNGTUYEN
+            FROM CHITIET_UNGTUYEN CT
+            JOIN BAIDANG BD ON CT.MABD = BD.MABD
+            WHERE CT.MAUV = ?
+            ORDER BY CT.NGAYUNGTUYEN DESC
+        ");
+        $stmt->execute([$mauv]);
+        $tinUngTuyen = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } else {
+        $tinUngTuyen = [];
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -253,48 +278,44 @@ function isActive($currentTab, $tabName) {
 
 <!-- Phần nội dung bên phải -->
 <div class="profile-content">
-  <?php
-    if ($tab === 'thong-tin-ca-nhan') {
-  ?>
+  <?php if ($tab === 'thong-tin-ca-nhan') : ?>
     <h3>Thông tin ứng viên</h3>
     <?php if (!empty($message)) : ?>
       <div class="alert-success"><?php echo $message; ?></div>
     <?php endif; ?>
 
     <form method="POST" action="ho-so.php?tab=thong-tin-ca-nhan">
-        <label for="tenuv">Tên ứng viên:</label>
-        <input type="text" id="tenuv" name="tenuv" value="<?php echo htmlspecialchars($row['TENUV'] ?? ''); ?>" required />
+      <label for="tenuv">Tên ứng viên:</label>
+      <input type="text" id="tenuv" name="tenuv" value="<?php echo htmlspecialchars($row['TENUV'] ?? ''); ?>" required />
 
-        <label>Giới tính:</label>
-        <div class="gender-options">
-            <input type="radio" id="nam" name="gioitinh" value="Nam" <?php echo (isset($row['GIOITINH']) && $row['GIOITINH'] === 'Nam') ? 'checked' : ''; ?> />
-            <label for="nam">Nam</label>
+      <label>Giới tính:</label>
+      <div class="gender-options">
+        <input type="radio" id="nam" name="gioitinh" value="Nam" <?php echo (isset($row['GIOITINH']) && $row['GIOITINH'] === 'Nam') ? 'checked' : ''; ?> />
+        <label for="nam">Nam</label>
 
-            <input type="radio" id="nu" name="gioitinh" value="Nữ" <?php echo (isset($row['GIOITINH']) && $row['GIOITINH'] === 'Nữ') ? 'checked' : ''; ?> />
-            <label for="nu">Nữ</label>
+        <input type="radio" id="nu" name="gioitinh" value="Nữ" <?php echo (isset($row['GIOITINH']) && $row['GIOITINH'] === 'Nữ') ? 'checked' : ''; ?> />
+        <label for="nu">Nữ</label>
 
-            <input type="radio" id="khac" name="gioitinh" value="Khác" <?php echo (isset($row['GIOITINH']) && $row['GIOITINH'] === 'Khác') ? 'checked' : ''; ?> />
-            <label for="khac">Khác</label>
-        </div>
+        <input type="radio" id="khac" name="gioitinh" value="Khác" <?php echo (isset($row['GIOITINH']) && $row['GIOITINH'] === 'Khác') ? 'checked' : ''; ?> />
+        <label for="khac">Khác</label>
+      </div>
 
-        <label for="chuyenmon">Chuyên môn:</label>
-        <input type="text" id="chuyenmon" name="chuyenmon" value="<?php echo htmlspecialchars($row['CHUYENMON'] ?? ''); ?>" />
+      <label for="chuyenmon">Chuyên môn:</label>
+      <input type="text" id="chuyenmon" name="chuyenmon" value="<?php echo htmlspecialchars($row['CHUYENMON'] ?? ''); ?>" />
 
-        <label for="cvht">Công việc hiện tại:</label>
-        <input type="text" id="cvht" name="cvht" value="<?php echo htmlspecialchars($row['CVHT'] ?? ''); ?>" />
+      <label for="cvht">Công việc hiện tại:</label>
+      <input type="text" id="cvht" name="cvht" value="<?php echo htmlspecialchars($row['CVHT'] ?? ''); ?>" />
 
-        <label for="sonamkn">Số năm kinh nghiệm:</label>
-        <input type="number" id="sonamkn" name="sonamkn" min="0" value="<?php echo htmlspecialchars($row['SONAMKN'] ?? ''); ?>" />
+      <label for="sonamkn">Số năm kinh nghiệm:</label>
+      <input type="number" id="sonamkn" name="sonamkn" min="0" value="<?php echo htmlspecialchars($row['SONAMKN'] ?? ''); ?>" />
 
-        <label for="ngaysinh">Ngày sinh:</label>
-        <input type="date" id="ngaysinh" name="ngaysinh" value="<?php echo htmlspecialchars($row['NGAYSINH'] ?? ''); ?>" required />
+      <label for="ngaysinh">Ngày sinh:</label>
+      <input type="date" id="ngaysinh" name="ngaysinh" value="<?php echo htmlspecialchars($row['NGAYSINH'] ?? ''); ?>" required />
 
-        <button type="submit">Cập nhật</button>
+      <button type="submit">Cập nhật</button>
     </form>
 
-  <?php
-    } elseif ($tab === 'ho-so') {
-  ?>
+  <?php elseif ($tab === 'ho-so') : ?>
     <h3>Hồ sơ ứng viên</h3>
 
     <?php if (!empty($message)) : ?>
@@ -303,98 +324,119 @@ function isActive($currentTab, $tabName) {
       <div class="alert-danger"><?php echo $error; ?></div>
     <?php endif; ?>
 
-    <?php if (!empty($row['CV_IMAGE'])): ?>
+    <?php if (!empty($row['CV_IMAGE'])) : ?>
       <p>File CV hiện tại:</p>
-
       <?php
         $cvFile = $row['CV_IMAGE'];
         $cvExtension = strtolower(pathinfo($cvFile, PATHINFO_EXTENSION));
       ?>
 
-      <?php if (in_array($cvExtension, ['jpg', 'jpeg', 'png', 'gif'])): ?>
+      <?php if (in_array($cvExtension, ['jpg', 'jpeg', 'png', 'gif'])) : ?>
         <img src="uploads/<?php echo htmlspecialchars($cvFile); ?>" alt="Ảnh CV"
              style="max-width: 300px; height: auto; border: 1px solid #ccc; padding: 5px;">
-      <?php elseif ($cvExtension === 'pdf'): ?>
+      <?php elseif ($cvExtension === 'pdf') : ?>
         <a href="uploads/<?php echo htmlspecialchars($cvFile); ?>" target="_blank">
           <?php echo htmlspecialchars($cvFile); ?>
         </a>
-      <?php else: ?>
+      <?php else : ?>
         <p>Định dạng file không hỗ trợ hiển thị trước.</p>
       <?php endif; ?>
-    <?php else: ?>
+    <?php else : ?>
       <p>Chưa có CV được tải lên.</p>
     <?php endif; ?>
 
     <form method="POST" enctype="multipart/form-data" action="ho-so.php?tab=ho-so">
-        <label for="anhcv">Tải lên ảnh CV (PDF, JPG, PNG):</label>
-        <input type="file" id="anhcv" name="anhcv" accept=".pdf,.jpg,.jpeg,.png" required />
-        <button type="submit">Cập nhật CV</button>
+      <label for="anhcv">Tải lên ảnh CV (PDF, JPG, PNG):</label>
+      <input type="file" id="anhcv" name="anhcv" accept=".pdf,.jpg,.jpeg,.png" required />
+      <button type="submit">Cập nhật CV</button>
     </form>
 
-  <?php
-    } elseif ($tab === 'tin-da-luu') {
-  ?>
+  <?php elseif ($tab === 'tin-da-luu') : ?>
     <h3>📝 Tin tuyển dụng đã lưu</h3>
     <?php if (empty($tinLuu)) : ?>
-        <p>Bạn chưa lưu tin tuyển dụng nào.</p>
+      <p>Bạn chưa lưu tin tuyển dụng nào.</p>
     <?php else : ?>
-        <div class="row">
-            <?php foreach ($tinLuu as $tin) : ?>
-                <div class="col-md-6 mb-4">
-                    <div class="card shadow-sm">
-                        <?php if (!empty($tin['HINHANH'])): ?>
-                            <img src="<?php echo htmlspecialchars($tin['HINHANH']); ?>" class="card-img-top" alt="Ảnh công việc">
-                        <?php endif; ?>
-                        <div class="card-body">
-                            <h5 class="card-title"><?php echo htmlspecialchars($tin['TENCV']); ?></h5>
-                            <p class="card-text">
-                                <strong>Ngành:</strong> <?php echo htmlspecialchars($tin['TENNGANH']); ?><br>
-                                <strong>Lương:</strong> <?php echo htmlspecialchars($tin['LUONG']); ?><br>
-                                <strong>Địa chỉ:</strong> <?php echo htmlspecialchars($tin['DIACHI']); ?><br>
-                                <strong>Kinh nghiệm:</strong> <?php echo htmlspecialchars($tin['KINHNGHIEM']); ?><br>
-                                <strong>Ngày lưu:</strong> <?php echo date("d/m/Y H:i", strtotime($tin['NGAYLUU'])); ?>
-                            </p>
-                            <a href="chi-tiet-tin.php?id=<?php echo $tin['MABD']; ?>" class="btn btn-primary">Xem chi tiết</a>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
+      <div class="row">
+        <?php foreach ($tinLuu as $tin) : ?>
+          <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+              <?php if (!empty($tin['HINHANH'])) : ?>
+                <img src="<?php echo htmlspecialchars($tin['HINHANH']); ?>" class="card-img-top" alt="Ảnh công việc">
+              <?php endif; ?>
+              <div class="card-body">
+                <h5 class="card-title"><?php echo htmlspecialchars($tin['TENCV']); ?></h5>
+                <p class="card-text">
+                  <strong>Ngành:</strong> <?php echo htmlspecialchars($tin['TENNGANH']); ?><br>
+                  <strong>Lương:</strong> <?php echo htmlspecialchars($tin['LUONG']); ?><br>
+                  <strong>Địa chỉ:</strong> <?php echo htmlspecialchars($tin['DIACHI']); ?><br>
+                  <strong>Kinh nghiệm:</strong> <?php echo htmlspecialchars($tin['KINHNGHIEM']); ?><br>
+                  <strong>Ngày lưu:</strong> <?php echo date("d/m/Y H:i", strtotime($tin['NGAYLUU'])); ?>
+                </p>
+                <a href="chi-tiet-tin.php?id=<?php echo $tin['MABD']; ?>" class="btn btn-primary">Xem chi tiết</a>
+              </div>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      </div>
     <?php endif; ?>
 
-  <?php
-    } elseif ($tab === 'tin-da-ung-tuyen') {
-      echo "<h3>Danh sách tin đã ứng tuyển - đang phát triển</h3>";
-    } elseif ($tab === 'cai-dat-bao-mat') {
-  ?>
-      <h3>Đổi mật khẩu</h3>
-      <?php if (!empty($message)) : ?>
-          <div class="alert-success" style="color: green; border: 1px solid green; padding: 8px;">
-              <?php echo $message; ?>
+  <?php elseif ($tab === 'tin-da-ung-tuyen') : ?>
+    <h3>📌 Tin đã ứng tuyển</h3>
+    <?php if (empty($tinUngTuyen)) : ?>
+      <p>Bạn chưa ứng tuyển tin tuyển dụng nào.</p>
+    <?php else : ?>
+      <div class="row">
+        <?php foreach ($tinUngTuyen as $tin) : ?>
+          <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+              <?php if (!empty($tin['HINHANH'])) : ?>
+                <img src="<?php echo htmlspecialchars($tin['HINHANH']); ?>" class="card-img-top" alt="Ảnh công việc">
+              <?php endif; ?>
+              <div class="card-body">
+                <h5 class="card-title"><?php echo htmlspecialchars($tin['TENCV']); ?></h5>
+                <p class="card-text">
+                  <strong>Ngành:</strong> <?php echo htmlspecialchars($tin['TENNGANH']); ?><br>
+                  <strong>Lương:</strong> <?php echo htmlspecialchars($tin['LUONG']); ?><br>
+                  <strong>Địa chỉ:</strong> <?php echo htmlspecialchars($tin['DIACHI']); ?><br>
+                  <strong>Kinh nghiệm:</strong> <?php echo htmlspecialchars($tin['KINHNGHIEM']); ?><br>
+                  <strong>Ngày ứng tuyển:</strong> <?php echo date("d/m/Y", strtotime($tin['NGAYUNGTUYEN'])); ?>
+                </p>
+                <a href="chi-tiet-ung-tuyen.php?id=<?php echo $tin['MABD']; ?>" class="btn btn-success">Xem chi tiết</a>
+              </div>
+            </div>
           </div>
-      <?php elseif (!empty($error)) : ?>
-          <div class="alert-danger" style="color: red; border: 1px solid red; padding: 8px;">
-              <?php echo $error; ?>
-          </div>
-      <?php endif; ?>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
 
-      <form method="POST" action="ho-so.php?tab=cai-dat-bao-mat">
-          <label for="matkhaucu">Mật khẩu hiện tại:</label>
-          <input type="password" id="matkhaucu" name="matkhaucu" required>
+  <?php elseif ($tab === 'cai-dat-bao-mat') : ?>
+    <h3>Đổi mật khẩu</h3>
+    <?php if (!empty($message)) : ?>
+      <div class="alert-success" style="color: green; border: 1px solid green; padding: 8px;">
+        <?php echo $message; ?>
+      </div>
+    <?php elseif (!empty($error)) : ?>
+      <div class="alert-danger" style="color: red; border: 1px solid red; padding: 8px;">
+        <?php echo $error; ?>
+      </div>
+    <?php endif; ?>
 
-          <label for="matkhaumoi">Mật khẩu mới:</label>
-          <input type="password" id="matkhaumoi" name="matkhaumoi" required>
+    <form method="POST" action="ho-so.php?tab=cai-dat-bao-mat">
+      <label for="matkhaucu">Mật khẩu hiện tại:</label>
+      <input type="password" id="matkhaucu" name="matkhaucu" required>
 
-          <label for="nhaplaimatkhaumoi">Nhập lại mật khẩu mới:</label>
-          <input type="password" id="nhaplaimatkhaumoi" name="nhaplaimatkhaumoi" required>
+      <label for="matkhaumoi">Mật khẩu mới:</label>
+      <input type="password" id="matkhaumoi" name="matkhaumoi" required>
 
-          <button type="submit">Cập nhật mật khẩu</button>
-      </form>
-  <?php
-    } else {
-      echo "<h3>Chọn tab ở bên trái để xem thông tin</h3>";
-    }
-  ?>
+      <label for="nhaplaimatkhaumoi">Nhập lại mật khẩu mới:</label>
+      <input type="password" id="nhaplaimatkhaumoi" name="nhaplaimatkhaumoi" required>
+
+      <button type="submit">Cập nhật mật khẩu</button>
+    </form>
+
+  <?php else : ?>
+    <h3>Chọn tab ở bên trái để xem thông tin</h3>
+  <?php endif; ?>
 </div>
 
 </body>

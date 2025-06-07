@@ -40,7 +40,7 @@ session_start();
       <ul class="navbar-nav">
         <?php if (isset($_SESSION['username'])): ?>
           <li class="nav-item">
-            <a class="btn btn-primary me-2" href="inbox.php">Hộp thư đến</a>
+            <a class="btn btn-primary me-2" href="hop-thu.php">Hộp thư đến</a>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
