@@ -1,7 +1,6 @@
 <?php
 session_start();
 ?>
-
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
     <a class="navbar-brand fw-bold" href="index.php">TalentHub</a>
@@ -60,7 +59,7 @@ session_start();
             <a class="btn btn-primary" href="dang-ky.php">Đăng ký</a>
           </li>
           <li class="nav-item">
-            <a class="btn btn-light fw-bold" href="nha-tuyen-dung/trang-chu.html">Dành cho nhà tuyển dụng</a>
+            <a class="btn btn-light fw-bold" href="nha-tuyen-dung/trang-chu.php">Dành cho nhà tuyển dụng</a>
           </li>
         <?php endif; ?>
       </ul>

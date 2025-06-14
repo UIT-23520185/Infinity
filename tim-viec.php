@@ -9,7 +9,7 @@ $luong = $_POST['luong'] ?? '';
 $htlv = $_POST['htlv'] ?? '';
 
 // Tạo câu truy vấn SQL
-$sql = "SELECT * FROM BAIDANG WHERE 1=1";
+$sql = "SELECT * FROM BAIDANG order by MABD desc";
 $params = [];
 
 if (!empty($keyword)) {

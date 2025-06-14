@@ -361,7 +361,7 @@ if ($tab === 'tin-da-ung-tuyen') {
           <div class="col-md-6 mb-4">
             <div class="card shadow-sm">
               <?php if (!empty($tin['HINHANH'])) : ?>
-                <img src="<?php echo htmlspecialchars($tin['HINHANH']); ?>" class="card-img-top" alt="Ảnh công việc">
+                <img src="uploads/<?php echo htmlspecialchars($tin['HINHANH']); ?>" class="card-img-top" alt="Ảnh công việc">
               <?php endif; ?>
               <div class="card-body">
                 <h5 class="card-title"><?php echo htmlspecialchars($tin['TENCV']); ?></h5>
@@ -390,7 +390,7 @@ if ($tab === 'tin-da-ung-tuyen') {
           <div class="col-md-6 mb-4">
             <div class="card shadow-sm">
               <?php if (!empty($tin['HINHANH'])) : ?>
-                <img src="<?php echo htmlspecialchars($tin['HINHANH']); ?>" class="card-img-top" alt="Ảnh công việc">
+                <img src="uploads/<?php echo htmlspecialchars($tin['HINHANH']); ?>" class="card-img-top" alt="Ảnh công việc">
               <?php endif; ?>
               <div class="card-body">
                 <h5 class="card-title"><?php echo htmlspecialchars($tin['TENCV']); ?></h5>

@@ -5,7 +5,6 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 include 'includes/dbconnection.php';
-
 // Kiểm tra người dùng đã đăng nhập chưa
 if (!isset($_SESSION['matk'])) {
     echo "<div class='container mt-5'><div class='alert alert-warning'>Bạn cần đăng nhập để lưu tin.</div></div>";
@@ -20,7 +19,6 @@ $sql = "SELECT MAUV FROM UNGVIEN WHERE MATK = ?";
 $stmt = $conn->prepare($sql);
 $stmt->execute([$matk]);
 $result = $stmt->fetch();
-
 if (!$result) {
     echo "<div class='container mt-5'><div class='alert alert-danger'>Tài khoản này không phải ứng viên hoặc chưa được cập nhật thông tin ứng viên.</div></div>";
     include 'includes/footer.html';

@@ -1,29 +1,9 @@
 <?php
-include 'includes/dbconnection.php';
-include 'includes/header.php';
+$page_name = "Hộp thư nhà tuyển dụng";
+include("../includes/dbconnection.php");
+include("includes/header.php");
 
-if (!isset($_SESSION['username'])) {
-    header('Location: dang-nhap.php');
-    exit;
-}
-?>
-
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hộp thư đến - TalentHub</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
-</head>
-<body>
-
-<section class="inbox py-5">
-  <div class="container">
-    <h3 class="mb-4 fw-bold">Hộp thư đến</h3>
-
-<?php // Kiểm tra đăng nhập
+// Kiểm tra đăng nhập
 if (!isset($_SESSION['matk'])) {
     echo "<div class='alert alert-danger'>Vui lòng đăng nhập</div>";
     exit();
@@ -66,7 +46,8 @@ $thuthus = $stmt->fetchAll();
 
 <div class="container my-5">
   <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-4 mb-4"><?php include("includes/sidebar.php"); ?></div>
+    <div class="col-md-8">
       <div class="p-4 rounded" style="background-color: #e6f4c3;">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -111,11 +92,4 @@ $thuthus = $stmt->fetchAll();
   </div>
 </div>
 
-  </div>
-</section>
-
-<?php include 'includes/footer.html'; ?>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<?php include("includes/footer.php"); ?>

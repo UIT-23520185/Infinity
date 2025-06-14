@@ -1,11 +1,9 @@
 <?php
 include 'includes/header.php';
-
 if (!isset($_SESSION['username'])) {
     header("Location: dang-nhap.php");
     exit();
 }
-
 $hoten = $_SESSION['hoten'];
 $vaitro = $_SESSION['vaitro'];
 ?>
